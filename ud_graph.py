@@ -103,11 +103,17 @@ class UndirectedGraph:
 
         edges: set = set()
 
+        # Iterate through all vertices.
         for v in self.get_vertices():
             v_edges: list = list()
+
+            # Add each vertex pair to edges.
             for u in self.adj_list[v]:
+
+                # Only add vertex pair if it is unique (i.e. (u, v) != (v, u)).
                 if (u, v) not in edges:
                     v_edges.append((v, u))
+
             edges.update(v_edges)
 
         return list(edges)
