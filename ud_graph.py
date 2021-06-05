@@ -47,6 +47,20 @@ class UndirectedGraph:
 
         self.adj_list.setdefault(v, list())
 
+    def remove_vertex(self, v: str) -> None:
+        """
+        Remove vertex and all connected edges.
+
+        If vertex does not exist, does nothing and returns to caller.
+        """
+
+        # Remove vertex from adjacency list.
+        v_edges: list = self.adj_list.pop(v, list())
+
+        # Remove all edges incident to vertex.
+        for edge in v_edges:
+            self.adj_list[edge].remove(v)
+
     def add_edge(self, u: str, v: str) -> None:
         """
         Add edge to the graph between vertices u and v.

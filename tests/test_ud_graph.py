@@ -128,6 +128,18 @@ class TestUDGraph(unittest.TestCase):
         self.assertFalse(adj_1)
         self.assertFalse(adj_2)
 
+    def test_remove_vertex_example_1(self) -> None:
+        # Arrange
+        exp: dict = {'A': ['B', 'C'], 'B': ['A', 'C'], 'C': ['A', 'B', 'E'], 'E': ['C']}
+        g: UndirectedGraph = UndirectedGraph(['AB', 'AC', 'BC', 'BD', 'CD', 'CE', 'DE'])
+
+        # Act
+        g.remove_vertex('DOES NOT EXIST')
+        g.remove_vertex('D')
+
+        # Assert
+        self.assertDictEqual(exp, g.adj_list)
+
 
 if __name__ == "__main__":
     unittest.main()
