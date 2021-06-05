@@ -140,6 +140,18 @@ class TestUDGraph(unittest.TestCase):
         # Assert
         self.assertDictEqual(exp, g.adj_list)
 
+    def test_remove_edge_example_1(self) -> None:
+        # Arrange
+        exp: dict = {'A': ['C'], 'B': ['C', 'D'], 'C': ['A', 'B', 'D', 'E'], 'D': ['B', 'C', 'E'], 'E': ['C', 'D']}
+        g: UndirectedGraph = UndirectedGraph(['AB', 'AC', 'BC', 'BD', 'CD', 'CE', 'DE'])
+
+        # Act
+        g.remove_edge('A', 'B')
+        g.remove_edge('X', 'B')
+
+        # Assert
+        self.assertDictEqual(exp, g.adj_list)
+
 
 if __name__ == "__main__":
     unittest.main()

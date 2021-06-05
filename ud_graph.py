@@ -74,21 +74,20 @@ class UndirectedGraph:
         self.add_vertex(v)
 
         # Add edge if vertices are not adjacent (or the same).
-        if not self.are_adjacent(u, v) and u != v:
+        if u != v and not self.are_adjacent(u, v):
             self.adj_list[u].append(v)
             self.adj_list[v].append(u)
 
-    def remove_edge(self, v: str, u: str) -> None:
+    def remove_edge(self, u: str, v: str) -> None:
         """
-        Remove edge from the graph
-        """
-        pass
+        Remove edge from the graph that is incident to vertices u and v.
 
-    def remove_vertex(self, v: str) -> None:
+        If either vertex does not exist, or there is no edge between them, does nothing and returns to caller.
         """
-        Remove vertex and all connected edges
-        """
-        pass
+
+        if u != v and self.are_adjacent(u, v):
+            self.adj_list[u].remove(v)
+            self.adj_list[v].remove(u)
 
     def get_vertices(self) -> []:
         """
