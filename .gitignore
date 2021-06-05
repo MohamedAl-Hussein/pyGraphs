@@ -133,3 +133,4 @@ dmypy.json
 
 # Project files.
 *.txt
+default_tests.py
