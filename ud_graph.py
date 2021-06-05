@@ -96,10 +96,22 @@ class UndirectedGraph:
 
     def get_edges(self) -> []:
         """
-        Return list of edges in the graph (any order)
+        Return list of edges in the graph in lexicographic order.
+
+        Edges are returned as tuples of vertex endpoints.
         """
-        pass
-        
+
+        edges: set = set()
+
+        for v in self.get_vertices():
+            v_edges: list = list()
+            for u in self.adj_list[v]:
+                if (u, v) not in edges:
+                    v_edges.append((v, u))
+            edges.update(v_edges)
+
+        return list(edges)
+
     def is_valid_path(self, path: []) -> bool:
         """
         Return true if provided path is valid, False otherwise

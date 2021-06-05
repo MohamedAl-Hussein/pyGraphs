@@ -168,6 +168,17 @@ class TestUDGraph(unittest.TestCase):
         self.assertListEqual(exp_1, vert_1)
         self.assertListEqual(exp_2, vert_2)
 
+    def test_get_edges_example_1(self) -> None:
+        # Arrange
+        exp: list = [('A', 'B'), ('A', 'C'), ('B', 'C'), ('B', 'D'), ('C', 'D'), ('C', 'E')]
+        g: UndirectedGraph = UndirectedGraph(['AB', 'AC', 'BC', 'BD', 'CD', 'CE'])
+
+        # Act
+        edges: list = g.get_edges()
+
+        # Assert
+        self.assertCountEqual(exp, edges)
+
 
 if __name__ == "__main__":
     unittest.main()
