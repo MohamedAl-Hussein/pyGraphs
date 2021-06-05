@@ -108,3 +108,15 @@ class UndirectedGraph:
         Return True if graph contains a cycle, False otherwise
         """
         pass
+
+    def degree(self, v: str) -> int:
+        """
+        Returns the number of edges incident to a given vertex v.
+
+        Raises KeyError if vertex does not exist.
+        """
+
+        if v not in self.adj_list:
+            raise KeyError(f"Vertex {v} does not exist.")
+
+        return len(self.adj_list.get(v, list()))
