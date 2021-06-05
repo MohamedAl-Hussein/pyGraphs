@@ -134,10 +134,7 @@ class UndirectedGraph:
         """
         Returns the number of edges incident to a given vertex v.
 
-        Raises KeyError if vertex does not exist.
+        Returns -1 if vertex does not exist.
         """
 
-        if v not in self.adj_list:
-            raise KeyError(f"Vertex {v} does not exist.")
-
-        return len(self.adj_list.get(v, list()))
+        return len(self.adj_list.get(v, list())) if v in self.adj_list else -1

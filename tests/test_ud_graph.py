@@ -71,13 +71,16 @@ class TestUDGraph(unittest.TestCase):
         # Assert
         self.assertEqual(exp, deg)
 
-    def test_degree_raises_if_vertex_does_not_exist(self) -> None:
+    def test_degree_returns_neg_one_if_vertex_does_not_exist(self) -> None:
         # Arrange
+        exp: int = -1
         g: UndirectedGraph = UndirectedGraph()
 
-        # Act/Assert
-        with self.assertRaises(KeyError):
-            g.degree('A')
+        # Act
+        deg: int = g.degree('A')
+
+        # Assert
+        self.assertEqual(exp, deg)
 
     def test_are_adjacent_returns_true_if_vertices_adjacent(self) -> None:
         # Arrange
@@ -110,19 +113,20 @@ class TestUDGraph(unittest.TestCase):
         # Assert
         self.assertFalse(adj)
 
-    def test_are_adjacent_raises_if_one_or_more_vertices_dont_exist(self) -> None:
+    def test_are_adjacent_returns_false_if_one_or_more_vertices_dont_exist(self) -> None:
         # Arrange
         g: UndirectedGraph = UndirectedGraph()
         g.add_vertex('A')
         g.add_vertex('B')
         g.add_vertex('C')
 
-        # Act/Assert
-        with self.assertRaises(KeyError):
-            g.are_adjacent('A', 'D')
+        # Act
+        adj_1: bool = g.are_adjacent('A', 'D')
+        adj_2: bool = g.are_adjacent('D', 'E')
 
-        with self.assertRaises(KeyError):
-            g.are_adjacent('D', 'E')
+        # Assert
+        self.assertFalse(adj_1)
+        self.assertFalse(adj_2)
 
 
 if __name__ == "__main__":
