@@ -40,10 +40,13 @@ class UndirectedGraph:
 
     def add_vertex(self, v: str) -> None:
         """
-        Add new vertex to the graph
+        Add new vertex to the graph.
+
+        If vertex with same name already exists, does nothing and returns to caller.
         """
-        pass
-        
+
+        self.adj_list.setdefault(v, list())
+
     def add_edge(self, u: str, v: str) -> None:
         """
         Add edge to the graph
