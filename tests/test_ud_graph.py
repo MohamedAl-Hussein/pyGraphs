@@ -152,6 +152,22 @@ class TestUDGraph(unittest.TestCase):
         # Assert
         self.assertDictEqual(exp, g.adj_list)
 
+    def test_get_vertices_example_1(self) -> None:
+        # Arrange
+        exp_1: list = []
+        g_1: UndirectedGraph = UndirectedGraph()
+
+        exp_2: list = ['A', 'B', 'C', 'D', 'E']
+        g_2: UndirectedGraph = UndirectedGraph(['AB', 'AC', 'BC', 'BD', 'CD', 'CE'])
+
+        # Act
+        vert_1: list = g_1.get_vertices()
+        vert_2: list = g_2.get_vertices()
+
+        # Assert
+        self.assertListEqual(exp_1, vert_1)
+        self.assertListEqual(exp_2, vert_2)
+
 
 if __name__ == "__main__":
     unittest.main()

@@ -90,10 +90,9 @@ class UndirectedGraph:
             self.adj_list[v].remove(u)
 
     def get_vertices(self) -> []:
-        """
-        Return list of vertices in the graph (any order)
-        """
-        pass
+        """Return list of vertices in the graph in lexicographic order."""
+
+        return sorted(list(self.adj_list.keys()))
 
     def get_edges(self) -> []:
         """
