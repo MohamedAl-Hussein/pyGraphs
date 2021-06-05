@@ -47,6 +47,51 @@ class TestUDGraph(unittest.TestCase):
         with self.assertRaises(KeyError):
             g.degree('A')
 
+    def test_are_adjacent_returns_true_if_vertices_adjacent(self) -> None:
+        # Arrange
+        g: UndirectedGraph = UndirectedGraph()
+
+        g.add_vertex('A')
+        g.add_vertex('B')
+
+        g.add_edge('A', 'B')
+
+        # Act
+        adj: bool = g.are_adjacent('A', 'B')
+
+        # Assert
+        self.assertTrue(adj)
+
+    def test_are_adjacent_returns_false_if_vertices_not_adjacent(self) -> None:
+        # Arrange
+        g: UndirectedGraph = UndirectedGraph()
+
+        g.add_vertex('A')
+        g.add_vertex('B')
+        g.add_vertex('C')
+
+        g.add_edge('A', 'B')
+
+        # Act
+        adj: bool = g.are_adjacent('A', 'C')
+
+        # Assert
+        self.assertFalse(adj)
+
+    def test_are_adjacent_raises_if_one_or_more_vertices_dont_exist(self) -> None:
+        # Arrange
+        g: UndirectedGraph = UndirectedGraph()
+        g.add_vertex('A')
+        g.add_vertex('B')
+        g.add_vertex('C')
+
+        # Act/Assert
+        with self.assertRaises(KeyError):
+            g.are_adjacent('A', 'D')
+
+        with self.assertRaises(KeyError):
+            g.are_adjacent('D', 'E')
+
 
 if __name__ == "__main__":
     unittest.main()

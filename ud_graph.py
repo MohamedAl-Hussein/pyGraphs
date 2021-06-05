@@ -109,6 +109,16 @@ class UndirectedGraph:
         """
         pass
 
+    def are_adjacent(self, u: str, v: str) -> bool:
+        """Returns True if two vertices u and v are joined by an edge."""
+
+        # Retrieve edges incident to vertices u and v.
+        u_edges: list = self.adj_list.get(u, list())
+        v_edges: list = self.adj_list.get(v, list())
+
+        # Search for neighboring vertex inside shortest edge list to maintain O(min(deg(u), deg(v))) running time.
+        return v in u_edges if self.degree(u) < self.degree(v) else u in v_edges
+
     def degree(self, v: str) -> int:
         """
         Returns the number of edges incident to a given vertex v.
