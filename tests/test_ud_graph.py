@@ -20,6 +20,38 @@ class TestUDGraph(unittest.TestCase):
         # Assert
         self.assertDictEqual(exp, g.adj_list)
 
+    def test_add_edge_example_1(self) -> None:
+        # Arrange
+        exp: dict = {'A': ['B', 'C'],
+                     'B': ['A', 'C', 'D'],
+                     'C': ['A', 'B', 'D', 'E'],
+                     'D': ['B', 'C', 'E'],
+                     'E': ['C', 'D']}
+
+        g: UndirectedGraph = UndirectedGraph()
+
+        for v in 'ABCDE':
+            g.add_vertex(v)
+
+        # Act
+        for u, v in ['AB', 'AC', 'BC', 'BD', 'CD', 'CE', 'DE', ('B', 'C')]:
+            g.add_edge(u, v)
+
+        # Assert
+        self.assertDictEqual(exp, g.adj_list)
+
+    def test_add_edge_does_nothing_if_vertices_are_the_same(self) -> None:
+        # Arrange
+        exp: dict = {'A': []}
+        g: UndirectedGraph = UndirectedGraph()
+
+        g.add_vertex('A')
+
+        # Act
+        g.add_edge('A', 'A')
+
+        # Assert
+        self.assertDictEqual(exp, g.adj_list)
 
     def test_degree_returns_degree_of_vertex_if_it_exists(self) -> None:
         # Arrange

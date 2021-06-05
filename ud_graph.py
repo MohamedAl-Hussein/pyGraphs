@@ -49,9 +49,20 @@ class UndirectedGraph:
 
     def add_edge(self, u: str, v: str) -> None:
         """
-        Add edge to the graph
+        Add edge to the graph between vertices u and v.
+
+        If either vertex does not exist, creates them before adding edge.
+        If edge already exists, or u and v refer to same vertex, does nothing and returns to caller.
         """
-        pass
+
+        # Add vertices to graph if they are missing.
+        self.add_vertex(u)
+        self.add_vertex(v)
+
+        # Add edge if vertices are not adjacent (or the same).
+        if not self.are_adjacent(u, v) and u != v:
+            self.adj_list[u].append(v)
+            self.adj_list[v].append(u)
 
     def remove_edge(self, v: str, u: str) -> None:
         """
