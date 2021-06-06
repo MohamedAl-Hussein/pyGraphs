@@ -72,13 +72,14 @@ class UndirectedGraph:
         """
 
         # Add vertices to graph if they are missing.
-        self.add_vertex(u)
-        self.add_vertex(v)
+        if u != v:
+            self.add_vertex(u)
+            self.add_vertex(v)
 
-        # Add edge if vertices are not adjacent (or the same).
-        if u != v and not self.are_adjacent(u, v):
-            self.adj_list[u].append(v)
-            self.adj_list[v].append(u)
+            # Add edge if vertices are not adjacent.
+            if not self.are_adjacent(u, v):
+                self.adj_list[u].append(v)
+                self.adj_list[v].append(u)
 
     def remove_edge(self, u: str, v: str) -> None:
         """
