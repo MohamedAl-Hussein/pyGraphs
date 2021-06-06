@@ -120,10 +120,31 @@ class UndirectedGraph:
 
     def is_valid_path(self, path: []) -> bool:
         """
-        Return true if provided path is valid, False otherwise
+        Return True if the provided path is valid.
+
+        An empty path or a path with a single vertex is considered valid.
         """
-        pass
-       
+
+        # Check if path is empty or contains only a single vertex.
+        if len(path) == 0:
+            return True
+        elif len(path) == 1:
+            if path[0] in self.adj_list:
+                return True
+            else:
+                return False
+
+        # Iterate through vertices in path, checking if they are adjacent to each other so that they form a path.
+        step: int = 0
+        while step < len(path) - 1:
+            u, v = path[step], path[step + 1]
+            if not self.are_adjacent(u, v):
+                return False
+
+            step += 1
+
+        return True
+
     def dfs(self, v_start, v_end=None) -> []:
         """
         Return list of vertices visited during DFS search

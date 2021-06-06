@@ -179,6 +179,17 @@ class TestUDGraph(unittest.TestCase):
         # Assert
         self.assertCountEqual(exp, edges)
 
+    def test_is_valid_path_example_1(self) -> None:
+        # Arrange
+        g: UndirectedGraph = UndirectedGraph(['AB', 'AC', 'BC', 'BD', 'CD', 'CE', 'DE'])
+        test_cases: list = [('ABC', True), ('ADE', False), ('ECABDCBE', False), ('ACDECB', True), ('', True),
+                            ('D', True), ('Z', False)]
+
+        # Act/Assert
+        for path, exp in test_cases:
+            valid: bool = g.is_valid_path(path)
+            self.assertEqual(exp, valid)
+
 
 if __name__ == "__main__":
     unittest.main()
