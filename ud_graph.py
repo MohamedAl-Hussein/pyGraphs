@@ -226,11 +226,10 @@ class UndirectedGraph:
 
         return visited
 
-    def count_connected_components(self):
-        """
-        Return number of connected components in the graph
-        """
-        pass
+    def count_connected_components(self) -> int:
+        """Return number of connected components in the graph."""
+
+        return len(self.connected_components())
 
     def has_cycle(self):
         """

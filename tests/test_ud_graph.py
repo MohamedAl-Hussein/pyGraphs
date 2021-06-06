@@ -311,6 +311,39 @@ class TestUDGraph(unittest.TestCase):
             self.assertCountEqual(sorted(exp)[i], sorted(comp)[i])
             i += 1
 
+    def test_count_connected_components_example_1(self) -> None:
+        # Arrange
+        edges: list = ['AE', 'AC', 'BE', 'CE', 'CD', 'CB', 'BD', 'ED', 'BH', 'QG', 'FG']
+        g: UndirectedGraph = UndirectedGraph(edges)
+        test_cases: tuple = (
+            ('add QH', 1),
+            ('remove FG', 2),
+            ('remove GQ', 3),
+            ('remove HQ', 4),
+            ('remove AE', 4),
+            ('remove CA', 5),
+            ('remove EB', 5),
+            ('remove CE', 5),
+            ('remove DE', 6),
+            ('remove BC', 6),
+            ('add EA', 5),
+            ('add EF', 4),
+            ('add GQ', 3),
+            ('add AC', 2),
+            ('add DQ', 1),
+            ('add EG', 1),
+            ('add QH', 1),
+            ('remove CD', 1),
+            ('remove BD', 1),
+            ('remove QG', 2)
+        )
+
+        for case, exp in test_cases:
+            command, edge = case.split()
+            u, v = edge
+            g.add_edge(u, v) if command == 'add' else g.remove_edge(u, v)
+            self.assertEqual(exp, g.count_connected_components())
+
 
 if __name__ == "__main__":
     unittest.main()
