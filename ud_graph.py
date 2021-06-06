@@ -150,8 +150,12 @@ class UndirectedGraph:
         Return list of vertices visited during DFS search
         Vertices are picked in alphabetical order
         """
-        pass
-       
+
+    def neighbors(self, v: str) -> []:
+        """Return the neighbors of a vertex v in lexicographic order."""
+
+        return sorted(self.adj_list.get(v, list()))
+
     def bfs(self, v_start, v_end=None) -> []:
         """
         Return list of vertices visited during BFS search
