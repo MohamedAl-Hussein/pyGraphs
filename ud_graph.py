@@ -262,6 +262,27 @@ class UndirectedGraph:
 
         return sorted(self.adj_list.get(v, list()))
 
+    def connected_components(self) -> []:
+        """Return a list of list containing all connected components in DFS order."""
+
+        components: list = list()
+
+        # No vertices in graph.
+        if self.is_empty():
+            return components
+
+        # Iterate through vertices, traversing from the start vertex using DFS order.
+        rem_vertices: list = self.get_vertices()
+        while len(rem_vertices) > 0:
+            v_start: str = rem_vertices.pop()
+            component: list = self.dfs(v_start)
+            components.append(component)
+
+            # Compute the set difference between remaining vertices and those just visited to determine if any
+            # components remain that haven't been traversed.
+            rem_vertices = list(set(rem_vertices) - set(component))
+
+        return components
 
     def is_empty(self) -> bool:
         """Return True if graph contains no vertices."""

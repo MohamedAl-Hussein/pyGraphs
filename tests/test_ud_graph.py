@@ -240,6 +240,77 @@ class TestUDGraph(unittest.TestCase):
             bfs: list = g.bfs(v_start, v_end)
             self.assertListEqual(exp, bfs)
 
+    def test_connected_components_empty_graph_returns_empty_list(self) -> None:
+        # Arrange
+        exp: list = list()
+        g: UndirectedGraph = UndirectedGraph()
+
+        # Act
+        comp: list = g.connected_components()
+
+        # Assert
+        self.assertEqual(exp, comp)
+
+    def test_connected_components_graph_with_disconnected_vertices_returns_each_vertex_as_component(self) -> None:
+        # Arrange
+        exp: list = [['A'], ['B'], ['C']]
+        g: UndirectedGraph = UndirectedGraph()
+
+        g.add_vertex('A')
+        g.add_vertex('B')
+        g.add_vertex('C')
+
+        # Act
+        comp: list = g.connected_components()
+
+        # Assert
+        self.assertCountEqual(exp, comp)
+
+    def test_connected_components_connected_graph_returns_single_component(self) -> None:
+        # Arrange
+        exp: list = [['A', 'B', 'C']]
+        g: UndirectedGraph = UndirectedGraph()
+
+        g.add_vertex('A')
+        g.add_vertex('B')
+        g.add_vertex('C')
+        g.add_edge('A', 'B')
+        g.add_edge('B', 'C')
+        g.add_edge('A', 'C')
+
+        # Act
+        comp: list = g.connected_components()
+
+        # Assert
+        self.assertEqual(len(exp), len(comp))
+        self.assertCountEqual(exp[0], comp[0])
+
+    def test_connected_components_disconnected_graph_returns_all_components(self) -> None:
+        # Arrange
+        exp: list = [['A', 'B', 'C'], ['D'], ['E', 'F']]
+        g: UndirectedGraph = UndirectedGraph()
+
+        g.add_vertex('A')
+        g.add_vertex('B')
+        g.add_vertex('C')
+        g.add_vertex('D')
+        g.add_vertex('E')
+        g.add_vertex('F')
+        g.add_edge('A', 'B')
+        g.add_edge('B', 'C')
+        g.add_edge('A', 'C')
+        g.add_edge('E', 'F')
+
+        # Act
+        comp: list = g.connected_components()
+
+        # Assert
+        self.assertEqual(len(exp), len(comp))
+        i: int = 0
+        while i < len(exp):
+            self.assertCountEqual(sorted(exp)[i], sorted(comp)[i])
+            i += 1
+
 
 if __name__ == "__main__":
     unittest.main()
