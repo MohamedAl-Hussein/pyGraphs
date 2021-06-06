@@ -187,17 +187,44 @@ class UndirectedGraph:
 
         return visited
 
-    def neighbors(self, v: str) -> []:
-        """Return the neighbors of a vertex v in lexicographic order."""
-
-        return sorted(self.adj_list.get(v, list()))
-
     def bfs(self, v_start, v_end=None) -> []:
         """
-        Return list of vertices visited during BFS search
-        Vertices are picked in alphabetical order
+        Return list of vertices visited during BFS search from v_start vertex up to optional v_end vertex.
+
+        If v_start is not in the graph, returns empty list.
+        If v_end is not in the graph, will treat it as having no v_end parameter.
+
+        Vertices are picked in ascending lexicographical order.
         """
-        pass
+
+        visited: list = list()
+
+        # Check if v_start is in graph.
+        if v_start not in self.adj_list:
+            return visited
+
+        # Check if v_end is in graph.
+        if v_end not in self.adj_list:
+            v_end = None
+
+        # Traverse graph until we either reach v_end or traverse every vertex.
+        vertices: deque = deque()
+        vertices.appendleft(v_start)
+        while len(vertices) > 0:
+            v: str = vertices.pop()
+            if v not in visited:
+                # Add vertex to visited vertices.
+                visited.append(v)
+
+                # Stop if vertex is equal to v_end.
+                if v == v_end:
+                    break
+
+                # Add all neighbors of vertex in ascending lexicographic order.
+                for neighbor in self.neighbors(v):
+                    vertices.appendleft(neighbor)
+
+        return visited
 
     def count_connected_components(self):
         """
@@ -229,3 +256,9 @@ class UndirectedGraph:
         """
 
         return len(self.adj_list.get(v, list())) if v in self.adj_list else -1
+
+    def neighbors(self, v: str) -> []:
+        """Return the neighbors of a vertex v in lexicographic order."""
+
+        return sorted(self.adj_list.get(v, list()))
+
