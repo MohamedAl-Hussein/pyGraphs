@@ -262,3 +262,8 @@ class UndirectedGraph:
 
         return sorted(self.adj_list.get(v, list()))
 
+
+    def is_empty(self) -> bool:
+        """Return True if graph contains no vertices."""
+
+        return len(self.adj_list) == 0
