@@ -3,6 +3,8 @@
 # Assignment: 
 # Description:
 
+from collections import deque
+
 
 class UndirectedGraph:
     """
@@ -145,11 +147,45 @@ class UndirectedGraph:
 
         return True
 
-    def dfs(self, v_start, v_end=None) -> []:
+    def dfs(self, v_start: str, v_end: str = None) -> []:
         """
-        Return list of vertices visited during DFS search
-        Vertices are picked in alphabetical order
+        Return list of vertices visited during DFS search from v_start vertex up to optional v_end vertex.
+
+        If v_start is not in the graph, returns empty list.
+        If v_end is not in the graph, will treat it as having no v_end parameter.
+
+        Vertices are picked in ascending lexicographical order.
         """
+
+        visited: list = list()
+
+        # Check if v_start is in graph.
+        if v_start not in self.adj_list:
+            return visited
+
+        # Check if v_end is in graph.
+        if v_end not in self.adj_list:
+            v_end = None
+
+        # Traverse graph until we either reach v_end or traverse every vertex.
+        vertices: deque = deque()
+        vertices.appendleft(v_start)
+        while len(vertices) > 0:
+            v: str = vertices.popleft()
+            if v not in visited:
+                # Add vertex to visited vertices.
+                visited.append(v)
+
+                # Stop if vertex is equal to v_end.
+                if v == v_end:
+                    break
+
+                # Add all neighbors of vertex in descending lexicographic order so that they are popped in ascending
+                # lexicographic order.
+                for neighbor in reversed(self.neighbors(v)):
+                    vertices.appendleft(neighbor)
+
+        return visited
 
     def neighbors(self, v: str) -> []:
         """Return the neighbors of a vertex v in lexicographic order."""

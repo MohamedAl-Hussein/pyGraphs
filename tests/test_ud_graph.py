@@ -190,6 +190,31 @@ class TestUDGraph(unittest.TestCase):
             valid: bool = g.is_valid_path(path)
             self.assertEqual(exp, valid)
 
+    def test_dfs_example_1(self) -> None:
+        # Arrange
+        edges: list = ['AE', 'AC', 'BE', 'CE', 'CD', 'CB', 'BD', 'ED', 'BH', 'QG', 'FG']
+        g: UndirectedGraph = UndirectedGraph(edges)
+        test_cases: list = [
+            ('A', None, ['A', 'C', 'B', 'D', 'E', 'H']),
+            ('B', None, ['B', 'C', 'A', 'E', 'D', 'H']),
+            ('C', None, ['C', 'A', 'E', 'B', 'D', 'H']),
+            ('D', None, ['D', 'B', 'C', 'A', 'E', 'H']),
+            ('E', None, ['E', 'A', 'C', 'B', 'D', 'H']),
+            ('G', None, ['G', 'F', 'Q']),
+            ('H', None, ['H', 'B', 'C', 'A', 'E', 'D']),
+            ('B', 'G', ['B', 'C', 'A', 'E', 'D', 'H']),
+            ('C', 'E', ['C', 'A', 'E']),
+            ('D', 'D', ['D']),
+            ('E', 'C', ['E', 'A', 'C']),
+            ('G', 'B', ['G', 'F', 'Q']),
+            ('H', 'A', ['H', 'B', 'C', 'A'])
+        ]
+
+        # Act/Assert
+        for v_start, v_end, exp in test_cases:
+            dfs: list = g.dfs(v_start, v_end)
+            self.assertListEqual(exp, dfs)
+
 
 if __name__ == "__main__":
     unittest.main()
