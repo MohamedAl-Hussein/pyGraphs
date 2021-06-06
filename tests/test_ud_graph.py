@@ -344,6 +344,41 @@ class TestUDGraph(unittest.TestCase):
             g.add_edge(u, v) if command == 'add' else g.remove_edge(u, v)
             self.assertEqual(exp, g.count_connected_components())
 
+    def test_has_cycle_example_1(self) -> None:
+        # Arrange
+        edges: list = ['AE', 'AC', 'BE', 'CE', 'CD', 'CB', 'BD', 'ED', 'BH', 'QG', 'FG']
+        g: UndirectedGraph = UndirectedGraph(edges)
+        test_cases: tuple = (
+            ('add QH', True),
+            ('remove FG', True),
+            ('remove GQ', True),
+            ('remove HQ', True),
+            ('remove AE', True),
+            ('remove CA', True),
+            ('remove EB', True),
+            ('remove CE', True),
+            ('remove DE', True),
+            ('remove BC', False),
+            ('add EA', False),
+            ('add EF', False),
+            ('add GQ', False),
+            ('add AC', False),
+            ('add DQ', False),
+            ('add EG', True),
+            ('add QH', True),
+            ('remove CD', True),
+            ('remove BD', False),
+            ('remove QG', False),
+            ('add FG', True),
+            ('remove GE', False)
+        )
+
+        for case, exp in test_cases:
+            command, edge = case.split()
+            u, v = edge
+            g.add_edge(u, v) if command == 'add' else g.remove_edge(u, v)
+            self.assertEqual(exp, g.has_cycle())
+
 
 if __name__ == "__main__":
     unittest.main()

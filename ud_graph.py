@@ -232,10 +232,36 @@ class UndirectedGraph:
         return len(self.connected_components())
 
     def has_cycle(self):
-        """
-        Return True if graph contains a cycle, False otherwise
-        """
-        pass
+        """Return True if graph contains a cycle."""
+
+        # Iterate through all components in graph.
+        components: list = self.connected_components()
+        for component in components:
+
+            # Perform DFS on each component, searching for any cycles.
+            v_start: str = component.pop()
+            visited: list = list()
+
+            # Traverse all vertices in graph.
+            vertices: deque = deque()
+            vertices.appendleft(v_start)
+            while len(vertices) > 0:
+                v: str = vertices.popleft()
+                if v not in visited:
+                    # Add vertex to visited vertices.
+                    visited.append(v)
+
+                    # Add all neighbors of vertex in descending lexicographic order so that they are popped in ascending
+                    # lexicographic order.
+                    for neighbor in reversed(self.neighbors(v)):
+
+                        # If neighbor already in vertices stack, then there's a cycle involving that neighbor.
+                        if neighbor in vertices:
+                            return True
+
+                        vertices.appendleft(neighbor)
+
+        return False
 
     def are_adjacent(self, u: str, v: str) -> bool:
         """Returns True if two vertices u and v are joined by an edge."""
