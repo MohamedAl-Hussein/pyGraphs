@@ -38,6 +38,29 @@ class TestDirectedGraph(unittest.TestCase):
         # Assert
         self.assertListEqual(exp, g.adj_matrix)
 
+    def test_is_valid_edge_returns_true_if_valid(self) -> None:
+        # Arrange
+        g: DirectedGraph = DirectedGraph()
+        for _ in range(2):
+            g.add_vertex()
+
+        # Act/Assert
+        self.assertTrue(g._is_valid_edge(0, 1))
+        self.assertTrue(g._is_valid_edge(1, 0))
+
+    def test_is_valid_edge_returns_false_if_valid(self) -> None:
+        # Arrange
+        g: DirectedGraph = DirectedGraph()
+        for _ in range(2):
+            g.add_vertex()
+
+        # Act/Assert
+        self.assertFalse(g._is_valid_edge(0, 0))
+        self.assertFalse(g._is_valid_edge(1, 1))
+        self.assertFalse(g._is_valid_edge(0, 2))
+        self.assertFalse(g._is_valid_edge(2, 0))
+        self.assertFalse(g._is_valid_edge(2, 2))
+
 
 if __name__ == "__main__":
     unittest.main()

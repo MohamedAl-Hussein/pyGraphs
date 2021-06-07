@@ -72,13 +72,12 @@ class DirectedGraph:
         """
         Adds a new edge to the graph, connecting src vertex to dst vertex.
 
-        If weight is not positive, does nothing and returns.
-        If src and dst point to the same vertex, does nothing and returns.
+        If src and dst point to the same vertex, or if weight is not positive, does nothing and returns.
         If edge already exists, updates weight of edge.
         """
 
-        # Only update weight if src and dst don't point to same vertex and weight is positive.
-        if src != dst and weight >= 1:
+        # Only update weight if src and dst exist and don't point to same vertex and weight is positive.
+        if self._is_valid_edge(src, dst) and weight >= 1:
             self.adj_matrix[src][dst] = weight
 
     def remove_edge(self, src: int, dst: int) -> None:
@@ -128,3 +127,12 @@ class DirectedGraph:
         TODO: Write this implementation
         """
         pass
+
+    def _is_valid_edge(self, src: int, dst: int) -> bool:
+        """
+        Returns True if an edge between a src and dst vertex is valid.
+
+        An edge is invalid if the src and dst point to the same vertex, or if either vertex is not on the graph.
+        """
+
+        return src != dst and 0 <= src < self.v_count and 0 <= dst < self.v_count
