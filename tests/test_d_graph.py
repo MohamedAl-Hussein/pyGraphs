@@ -121,6 +121,20 @@ class TestDirectedGraph(unittest.TestCase):
         # Assert
         self.assertListEqual(exp, edges)
 
+    def test_is_valid_path_example_1(self) -> None:
+        # Arrange
+        exp: list = [True, False, False, True, True, True]
+        edges: list = [(0, 1, 10), (4, 0, 12), (1, 4, 15), (4, 3, 3), (3, 1, 5), (2, 1, 23), (3, 2, 7)]
+        g: DirectedGraph = DirectedGraph(edges)
+        test_cases: list = [[0, 1, 4, 3], [1, 3, 2, 1], [0, 4], [4, 0], [], [2]]
+
+        # Act/Assert
+        i: int = 0
+        for path in test_cases:
+            valid: bool = g.is_valid_path(path)
+            self.assertEqual(exp[i], valid)
+            i += 1
+
     def test_are_adjacent_returns_false_if_no_outgoing_edge_from_src_to_dst(self) -> None:
         # Arrange
         g: DirectedGraph = DirectedGraph()

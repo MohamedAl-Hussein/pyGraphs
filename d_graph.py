@@ -114,9 +114,30 @@ class DirectedGraph:
 
     def is_valid_path(self, path: []) -> bool:
         """
-        TODO: Write this implementation
+        Return True if the provided path is valid.
+
+        An empty path or a path with a single vertex is considered valid.
         """
-        pass
+
+        # Check if path is empty or contains only a single vertex.
+        if len(path) == 0:
+            return True
+        elif len(path) == 1:
+            if 0 <= path[0] < self.v_count:
+                return True
+            else:
+                return False
+
+        # Iterate through vertices in path, checking if they are adjacent to each other so that they form a path.
+        step: int = 0
+        while step < len(path) - 1:
+            src, dst = path[step], path[step + 1]
+            if not self.are_adjacent(src, dst):
+                return False
+
+            step += 1
+
+        return True
 
     def dfs(self, v_start, v_end=None) -> []:
         """
