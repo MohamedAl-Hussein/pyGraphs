@@ -251,6 +251,11 @@ class DirectedGraph:
 
         return neighbors
 
+    def is_empty(self) -> bool:
+        """Return True if the graph contains no vertices."""
+
+        return self.v_count == 0
+
     def _is_valid_edge(self, src: int, dst: int) -> bool:
         """
         Returns True if an edge between a src and dst vertex is valid.
