@@ -3,6 +3,7 @@
 # Assignment:
 # Description:
 
+
 class DirectedGraph:
     """
     Class to implement directed weighted graph
@@ -48,13 +49,24 @@ class DirectedGraph:
         out = f"GRAPH ({self.v_count} vertices):\n{out}"
         return out
 
-    # ------------------------------------------------------------------ #
-
     def add_vertex(self) -> int:
         """
-        TODO: Write this implementation
+        Adds new vertex to the graph.
+
+        Returns new number of vertices in graph.
         """
-        pass
+
+        # Extend matrix by one column.
+        for row in self.adj_matrix:
+            row.append(0)
+
+        # Extend matrix by one row.
+        self.adj_matrix.append([0] * (self.v_count + 1))
+
+        # Update vertex count.
+        self.v_count += 1
+
+        return self.v_count
 
     def add_edge(self, src: int, dst: int, weight=1) -> None:
         """
