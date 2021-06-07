@@ -3,6 +3,8 @@
 # Assignment:
 # Description:
 
+from collections import deque
+
 
 class DirectedGraph:
     """
@@ -139,11 +141,44 @@ class DirectedGraph:
 
         return True
 
-    def dfs(self, v_start, v_end=None) -> []:
+    def dfs(self, v_start: int, v_end: int = None) -> []:
         """
-        TODO: Write this implementation
+        Return list of vertices visited during DFS search from v_start vertex up to optional v_end vertex.
+
+        If v_start is not in the graph, returns empty list.
+        If v_end is not in the graph, will treat it as having no v_end parameter.
+
+        Vertices are picked in ascending order.
         """
-        pass
+
+        visited: list = list()
+
+        # Check if v_start is in graph.
+        if not 0 <= v_start < self.v_count:
+            return visited
+
+        # Check if v_end is in graph.
+        if isinstance(v_end, int) and not 0 <= v_end < self.v_count:
+            v_end = None
+
+        # Traverse graph until we either reach v_end or traverse every vertex.
+        vertices: deque = deque()
+        vertices.appendleft(v_start)
+        while len(vertices) > 0:
+            v: int = vertices.popleft()
+            if v not in visited:
+                # Add vertex to visited vertices.
+                visited.append(v)
+
+                # Stop if vertex is equal to v_end.
+                if v == v_end:
+                    break
+
+                # Add all neighbors of vertex in descending order so that they are popped in ascending order.
+                for neighbor in reversed(self.neighbors(v)):
+                    vertices.appendleft(neighbor)
+
+        return visited
 
     def bfs(self, v_start, v_end=None) -> []:
         """

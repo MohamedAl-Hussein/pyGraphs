@@ -173,6 +173,25 @@ class TestDirectedGraph(unittest.TestCase):
         # Assert
         self.assertListEqual(exp, neighbors)
 
+    def test_dfs_example_1(self) -> None:
+        # Arrange
+        exp: list = [
+            [0, 1, 4, 3, 2],
+            [1, 4, 0, 3, 2],
+            [2, 1, 4, 0, 3],
+            [3, 1, 4, 0, 2],
+            [4, 0, 1, 3, 2]
+        ]
+        edges: list = [(0, 1, 10), (4, 0, 12), (1, 4, 15), (4, 3, 3), (3, 1, 5), (2, 1, 23), (3, 2, 7)]
+        g: DirectedGraph = DirectedGraph(edges)
+
+        # Act/Assert
+        i: int = 0
+        for start in range(5):
+            dfs: list = g.dfs(start)
+            self.assertListEqual(exp[i], dfs)
+            i += 1
+
 
 if __name__ == "__main__":
     unittest.main()
