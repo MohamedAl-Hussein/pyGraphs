@@ -98,9 +98,19 @@ class DirectedGraph:
 
     def get_edges(self) -> []:
         """
-        TODO: Write this implementation
+        Returns a list of 3-tuples containing the source vertex, destination vertex, and edge weight for all edges
+        in graph.
         """
-        pass
+
+        edges: list = list()
+
+        for i in range(self.v_count):
+            for j in range(self.v_count):
+                # Edge exists between vertex i and j.
+                if self.adj_matrix[i][j] > 0:
+                    edges.append((i, j, self.adj_matrix[i][j]))
+
+        return edges
 
     def is_valid_path(self, path: []) -> bool:
         """
