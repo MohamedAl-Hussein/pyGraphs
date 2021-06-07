@@ -121,6 +121,32 @@ class TestDirectedGraph(unittest.TestCase):
         # Assert
         self.assertListEqual(exp, edges)
 
+    def test_are_adjacent_returns_false_if_no_outgoing_edge_from_src_to_dst(self) -> None:
+        # Arrange
+        g: DirectedGraph = DirectedGraph()
+        g.add_vertex()
+        g.add_vertex()
+        g.add_edge(0, 1)
+
+        # Act
+        adj: bool = g.are_adjacent(1, 0)
+
+        # Assert
+        self.assertFalse(adj)
+
+    def test_are_adjacent_returns_true_if_outgoing_edge_from_src_to_dst(self) -> None:
+        # Arrange
+        g: DirectedGraph = DirectedGraph()
+        g.add_vertex()
+        g.add_vertex()
+        g.add_edge(0, 1)
+
+        # Act
+        adj: bool = g.are_adjacent(0, 1)
+
+        # Assert
+        self.assertTrue(adj)
+
 
 if __name__ == "__main__":
     unittest.main()

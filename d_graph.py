@@ -142,6 +142,15 @@ class DirectedGraph:
         """
         pass
 
+    def are_adjacent(self, src: int, dst: int) -> bool:
+        """Returns True if src vertex has an outgoing edge that connects to dst vertex."""
+
+        # Check if vertices are valid.
+        if not self._is_valid_edge(src, dst):
+            return False
+
+        return self.adj_matrix[src][dst] > 0
+
     def _is_valid_edge(self, src: int, dst: int) -> bool:
         """
         Returns True if an edge between a src and dst vertex is valid.
