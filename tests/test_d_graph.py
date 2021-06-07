@@ -161,6 +161,18 @@ class TestDirectedGraph(unittest.TestCase):
         # Assert
         self.assertTrue(adj)
 
+    def test_neighbors_returns_all_neighbors_of_vertex(self) -> None:
+        # Arrange
+        exp: list = [1, 3]
+        edges: list = [(0, 1, 1), (0, 3, 1)]
+        g: DirectedGraph = DirectedGraph(edges)
+
+        # Act
+        neighbors: list = g.neighbors(0)
+
+        # Assert
+        self.assertListEqual(exp, neighbors)
+
 
 if __name__ == "__main__":
     unittest.main()

@@ -172,6 +172,17 @@ class DirectedGraph:
 
         return self.adj_matrix[src][dst] > 0
 
+    def neighbors(self, v: int) -> []:
+        """Return all vertices that vertex v has an outgoing edge to."""
+
+        neighbors: list = list()
+
+        for i in range(self.v_count):
+            if self.adj_matrix[v][i] > 0:
+                neighbors.append(i)
+
+        return neighbors
+
     def _is_valid_edge(self, src: int, dst: int) -> bool:
         """
         Returns True if an edge between a src and dst vertex is valid.
