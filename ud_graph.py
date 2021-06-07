@@ -188,7 +188,7 @@ class UndirectedGraph:
 
         return visited
 
-    def bfs(self, v_start, v_end=None) -> []:
+    def bfs(self, v_start: int, v_end: int = None) -> []:
         """
         Return list of vertices visited during BFS search from v_start vertex up to optional v_end vertex.
 
