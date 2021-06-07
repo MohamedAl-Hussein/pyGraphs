@@ -97,6 +97,18 @@ class TestDirectedGraph(unittest.TestCase):
         self.assertFalse(g._is_valid_edge(2, 0))
         self.assertFalse(g._is_valid_edge(2, 2))
 
+    def test_get_vertices_example_1(self) -> None:
+        # Arrange
+        exp: list = [0, 1, 2, 3, 4]
+        edges: list = [(0, 1, 10), (4, 0, 12), (1, 4, 15), (4, 3, 3), (3, 1, 5), (2, 1, 23), (3, 2, 7)]
+        g: DirectedGraph = DirectedGraph(edges)
+
+        # Act
+        vertices: list = g.get_vertices()
+
+        # Assert
+        self.assertListEqual(exp, vertices)
+
 
 if __name__ == "__main__":
     unittest.main()

@@ -92,10 +92,9 @@ class DirectedGraph:
             self.adj_matrix[src][dst] = 0
 
     def get_vertices(self) -> []:
-        """
-        TODO: Write this implementation
-        """
-        pass
+        """Returns a list of vertices of the graph."""
+
+        return [_ for _ in range(self.v_count)]
 
     def get_edges(self) -> []:
         """
