@@ -211,6 +211,64 @@ class TestDirectedGraph(unittest.TestCase):
             self.assertListEqual(exp[i], dfs)
             i += 1
 
+    def test_connected_components_graph_with_disconnected_vertices_returns_each_vertex_as_component(self) -> None:
+        # Arrange
+        exp: list = [[0], [1]]
+        g: DirectedGraph = DirectedGraph()
+
+        g.add_vertex()
+        g.add_vertex()
+
+        # Act
+        comp: list = g.connected_components()
+
+        # Assert
+        self.assertCountEqual(exp, comp)
+
+    def test_connected_components_connected_graph_returns_single_component(self) -> None:
+        # Arrange
+        exp: list = [[0, 1, 2, 3]]
+        edges: list = [
+            (0, 1, 1),
+            (0, 2, 1),
+            (0, 3, 1),
+            (1, 2, 1),
+            (1, 3, 1),
+            (2, 3, 1)
+        ]
+        g: DirectedGraph = DirectedGraph(edges)
+
+        # Act
+        comp: list = g.connected_components()
+
+        # Assert
+        self.assertEqual(len(exp), len(comp))
+        self.assertCountEqual(exp[0], comp[0])
+
+    def test_connected_components_disconnected_graph_returns_all_components(self) -> None:
+        # Arrange
+        exp: list = [[0, 1], [2, 3], [4]]
+        g: DirectedGraph = DirectedGraph()
+
+        g.add_vertex()
+        g.add_vertex()
+        g.add_vertex()
+        g.add_vertex()
+        g.add_vertex()
+
+        g.add_edge(0, 1)
+        g.add_edge(2, 3)
+
+        # Act
+        comp: list = g.connected_components()
+
+        # Assert
+        self.assertEqual(len(exp), len(comp))
+        i: int = 0
+        while i < len(exp):
+            self.assertCountEqual(sorted(exp)[i], sorted(comp)[i])
+            i += 1
+
 
 if __name__ == "__main__":
     unittest.main()

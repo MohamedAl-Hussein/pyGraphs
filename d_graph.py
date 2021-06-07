@@ -251,6 +251,43 @@ class DirectedGraph:
 
         return neighbors
 
+    def connected_components(self) -> []:
+        """Return a list of list containing all connected components in DFS order."""
+
+        components: list = list()
+
+        # No vertices in graph.
+        if self.is_empty():
+            return components
+
+        # Iterate through vertices, traversing from the start vertex using DFS order.
+        rem_vertices: list = self.get_vertices()
+        while len(rem_vertices) > 0:
+            v_start: int = rem_vertices.pop()
+            component: list = self.dfs(v_start)
+
+            # Inspect components and determine if new component is a sub-component of an existing one, or if
+            # an existing component is a sub-component of the new component.
+            is_sub_component: bool = False
+            for c in components:
+                # New component is a sub-component of existing component. So we discard it.
+                if set(component) <= set(c):
+                    is_sub_component = True
+
+                # New component is a super-component of existing component. So we discard the existing one.
+                if set(c) <= set(component):
+                    components.remove(c)
+
+            # Discard component as it has already been recorded.
+            if not is_sub_component:
+                components.append(component)
+
+            # Compute the set difference between remaining vertices and those just visited to determine if any
+            # components remain that haven't been traversed.
+            rem_vertices = list(set(rem_vertices) - set(component))
+
+        return components
+
     def is_empty(self) -> bool:
         """Return True if the graph contains no vertices."""
 
