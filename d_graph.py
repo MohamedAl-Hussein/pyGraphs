@@ -220,10 +220,15 @@ class DirectedGraph:
         return visited
 
     def has_cycle(self):
-        """
-        TODO: Write this implementation
-        """
-        pass
+        """Return True if graph contains a cycle."""
+
+        # If any of the strongly connected components (SCC) of the graph contain more than one vertex, then that SCC
+        # contains a cycle and so does the graph.
+        for component in self.connected_components():
+            if len(component) > 1:
+                return True
+
+        return False
 
     def dijkstra(self, src: int) -> []:
         """
