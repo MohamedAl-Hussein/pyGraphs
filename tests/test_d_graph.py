@@ -247,9 +247,9 @@ class TestDirectedGraph(unittest.TestCase):
         # Assert
         self.assertCountEqual(exp, comp)
 
-    def test_connected_components_connected_graph_returns_single_component(self) -> None:
+    def test_connected_components_connected_graph_returns_all_vertices_as_components(self) -> None:
         # Arrange
-        exp: list = [[0, 1, 2, 3]]
+        exp: list = [[0], [1], [2], [3]]
         edges: list = [
             (0, 1, 1),
             (0, 2, 1),
@@ -269,7 +269,7 @@ class TestDirectedGraph(unittest.TestCase):
 
     def test_connected_components_disconnected_graph_returns_all_components(self) -> None:
         # Arrange
-        exp: list = [[0, 1], [2, 3], [4]]
+        exp: list = [[0], [1], [2], [3], [4]]
         g: DirectedGraph = DirectedGraph()
 
         g.add_vertex()
@@ -290,6 +290,39 @@ class TestDirectedGraph(unittest.TestCase):
         while i < len(exp):
             self.assertCountEqual(sorted(exp)[i], sorted(comp)[i])
             i += 1
+
+    def test_connected_components_returns_all_components_for_connected_graph(self) -> None:
+        """Example based off of: https://www.youtube.com/watch?v=HOOmetF56BI"""
+
+        # Arrange
+        exp: list = [
+            [1], [4, 7], [8], [3, 0, 5, 10], [6, 2, 9]
+        ]
+        edges: list = [
+            (4, 7, 1),
+            (7, 4, 1),
+            (4, 0, 1),
+            (0, 3, 1),
+            (3, 0, 1),
+            (0, 5, 1),
+            (5, 6, 1),
+            (5, 10, 1),
+            (10, 0, 1),
+            (10, 9, 1),
+            (9, 6, 1),
+            (6, 2, 1),
+            (2, 9, 1),
+            (1, 8, 1),
+            (8, 10, 1)
+        ]
+        g: DirectedGraph = DirectedGraph(edges)
+
+        # Act
+        components: list = g.connected_components()
+
+        # Assert
+        self.assertCountEqual(exp, components)
+
 
 
 if __name__ == "__main__":

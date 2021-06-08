@@ -241,39 +241,142 @@ class DirectedGraph:
         return self.adj_matrix[src][dst] > 0
 
     def connected_components(self) -> []:
-        """Return a list of list containing all connected components in DFS order."""
+        """
+        Return a list of lists containing all strongly connected components (SCC) of the graph.
+
+        Uses Kosaraju's algorithm to detect all SCCs.
+        """
 
         components: list = list()
 
-        # No vertices in graph.
         if self.is_empty():
             return components
 
-        # Iterate through vertices, traversing from the start vertex using DFS order.
-        rem_vertices: list = self.get_vertices()
-        while len(rem_vertices) > 0:
-            v_start: int = rem_vertices.pop()
-            component: list = self.dfs(v_start)
+        # Initialize stack for DFS traversal of graph.
+        s1: deque = deque()
 
-            # Inspect components and determine if new component is a sub-component of an existing one, or if
-            # an existing component is a sub-component of the new component.
-            is_sub_component: bool = False
-            for c in components:
-                # New component is a sub-component of existing component. So we discard it.
-                if set(component) <= set(c):
-                    is_sub_component = True
+        # Initialize stack to track last-visited vertices.
+        s2: deque = deque()
 
-                # New component is a super-component of existing component. So we discard the existing one.
-                if set(c) <= set(component):
-                    components.remove(c)
+        # Initialize stack to track current visited vertices.
+        s3: deque = deque()
 
-            # Discard component as it has already been recorded.
-            if not is_sub_component:
-                components.append(component)
+        # Initialize set to track all visited vertices.
+        visited: set = set()
 
-            # Compute the set difference between remaining vertices and those just visited to determine if any
-            # components remain that haven't been traversed.
-            rem_vertices = list(set(rem_vertices) - set(component))
+        # Initialize list of vertices to traverse.
+        vertices: list = self.get_vertices()
+
+        # Traverse vertices via DFS until all vertices are visited.
+        while len(vertices) > 0:
+            v: int = vertices.pop()
+
+            # Grab next vertex that hasn't been visited.
+            while v in visited and len(vertices) > 0:
+                v = vertices.pop()
+
+            # Visited all vertices, so we can stop.
+            if v is None:
+                break
+
+            # Clear DFS stack.
+            s1.clear()
+
+            # Traverse graph in DFS order starting from vertex v.
+            s1.appendleft(v)
+            while len(s1) > 0:
+                v = s1.popleft()
+
+                if v not in visited:
+                    visited.add(v)
+
+                    # Track visit order for later so we can roll back once we hit a dead end.
+                    s3.appendleft(v)
+
+                    # Find all unvisited neighbors of vertex v.
+                    neighbors = self.neighbors(v)
+                    unvisited_neighbors = list()
+                    for neighbor in neighbors:
+                        if neighbor not in visited:
+                            unvisited_neighbors.append(neighbor)
+
+                    # We have hit a dead end.
+                    if len(unvisited_neighbors) == 0:
+
+                        # Roll back until we reach a vertex with a neighbor that hasn't been visited.
+                        while len(s3) > 0:
+
+                            # Peek at most recently visited vertex.
+                            prev_v = s3[0]
+
+                            # Check if recent vertex has any neighbor's that we haven't visited yet.
+                            prev_v_neighbors = self.neighbors(prev_v)
+                            prev_v_unvisited = list()
+                            for p in prev_v_neighbors:
+                                if p not in visited:
+                                    prev_v_unvisited.append(p)
+
+                            # If there are no neighbor's left to visit, roll back visit stack.
+                            if len(prev_v_unvisited) == 0:
+                                v = s3.popleft()
+                                if v not in s2:
+                                    s2.appendleft(v)
+
+                            # Otherwise, stop and continue DFS starting from next vertex.
+                            else:
+                                break
+
+                    # Add all unvisited neighbors to DFS stack.
+                    for neighbor in unvisited_neighbors:
+                        s1.appendleft(neighbor)
+
+        # Reverse graph to perform second round of DFS.
+        d_reverse: DirectedGraph = self.reversed()
+
+        # Clear visited stack.
+        visited.clear()
+
+        # Traverse vertices via DFS until all vertices are visited.
+        while len(s2) > 0:
+            v = s2.popleft()
+
+            # Grab next vertex that hasn't been visited.
+            while v in visited and len(s2) > 0:
+                v = s2.popleft()
+
+            # Visited all vertices, so we can stop.
+            if v is None:
+                break
+
+            # Clear DFS stack.
+            s1.clear()
+
+            # Create new list to track all vertices in a given component.
+            component: list = list()
+
+            # Traverse graph in DFS order starting from vertex v.
+            s1.appendleft(v)
+            while len(s1) > 0:
+                v = s1.popleft()
+
+                if v not in visited:
+                    visited.add(v)
+                    component.append(v)
+
+                    # Find all unvisited neighbors of vertex v.
+                    neighbors = d_reverse.neighbors(v)
+                    unvisited_neighbors = list()
+                    for neighbor in neighbors:
+                        if neighbor not in visited:
+                            unvisited_neighbors.append(neighbor)
+
+                    # Add all unvisited neighbors to DFS stack.
+                    for neighbor in unvisited_neighbors:
+                        s1.appendleft(neighbor)
+
+            # Add component to components list in reverse order since second traversal of DFS is done in reverse.
+            if len(component) > 0:
+                components.append(list(reversed(component)))
 
         return components
 
