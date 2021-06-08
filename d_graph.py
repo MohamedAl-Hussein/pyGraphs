@@ -240,17 +240,6 @@ class DirectedGraph:
 
         return self.adj_matrix[src][dst] > 0
 
-    def neighbors(self, v: int) -> []:
-        """Return all vertices that vertex v has an outgoing edge to."""
-
-        neighbors: list = list()
-
-        for i in range(self.v_count):
-            if self.adj_matrix[v][i] > 0:
-                neighbors.append(i)
-
-        return neighbors
-
     def connected_components(self) -> []:
         """Return a list of list containing all connected components in DFS order."""
 
@@ -287,6 +276,32 @@ class DirectedGraph:
             rem_vertices = list(set(rem_vertices) - set(component))
 
         return components
+
+    def reversed(self) -> "DirectedGraph":
+        """Returns a new DirectedGraph with outgoing edges swapped with incoming and vice versa."""
+
+        # Initialize new empty digraph with similar number of vertices.
+        d_graph: DirectedGraph = DirectedGraph()
+        for _ in range(self.v_count):
+            d_graph.add_vertex()
+
+        # Reflect edges over matrix diagonal to reverse their orientation then add them to new digraph.
+        for i in range(self.v_count):
+            for j in range(self.v_count):
+                d_graph.adj_matrix[i][j] = self.adj_matrix[j][i]
+
+        return d_graph
+
+    def neighbors(self, v: int) -> []:
+        """Return all vertices that vertex v has an outgoing edge to."""
+
+        neighbors: list = list()
+
+        for i in range(self.v_count):
+            if self.adj_matrix[v][i] > 0:
+                neighbors.append(i)
+
+        return neighbors
 
     def is_empty(self) -> bool:
         """Return True if the graph contains no vertices."""

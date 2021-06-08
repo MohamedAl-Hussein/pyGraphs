@@ -211,6 +211,28 @@ class TestDirectedGraph(unittest.TestCase):
             self.assertListEqual(exp[i], dfs)
             i += 1
 
+    def test_reversed_returns_graph_with_reversed_edges(self) -> None:
+        # Arrange
+        exp: list = [
+            (0, 1, 1),
+            (0, 2, 1),
+            (2, 1, 1),
+            (3, 2, 1)
+        ]
+        edges: list = [
+            (1, 0, 1),
+            (2, 0, 1),
+            (1, 2, 1),
+            (2, 3, 1)
+        ]
+        g: DirectedGraph = DirectedGraph(edges)
+
+        # Act
+        g_reversed: DirectedGraph = g.reversed()
+
+        # Assert
+        self.assertCountEqual(exp, g_reversed.get_edges())
+
     def test_connected_components_graph_with_disconnected_vertices_returns_each_vertex_as_component(self) -> None:
         # Arrange
         exp: list = [[0], [1]]
