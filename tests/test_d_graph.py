@@ -321,7 +321,13 @@ class TestDirectedGraph(unittest.TestCase):
         components: list = g.connected_components()
 
         # Assert
-        self.assertCountEqual(exp, components)
+        self.assertEqual(len(exp), len(components))
+        i: int = 0
+        exp = sorted(exp, key=sum)
+        comp = sorted(components, key=sum)
+        while i < len(exp):
+            self.assertCountEqual(exp[i], comp[i])
+            i += 1
 
     def test_has_cycle_example_1(self) -> None:
         # Arrange

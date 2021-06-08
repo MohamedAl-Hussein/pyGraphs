@@ -162,23 +162,7 @@ class DirectedGraph:
             v_end = None
 
         # Traverse graph until we either reach v_end or traverse every vertex.
-        vertices: deque = deque()
-        vertices.appendleft(v_start)
-        while len(vertices) > 0:
-            v: int = vertices.popleft()
-            if v not in visited:
-                # Add vertex to visited vertices.
-                visited.append(v)
-
-                # Stop if vertex is equal to v_end.
-                if v == v_end:
-                    break
-
-                # Add all neighbors of vertex in descending order so that they are popped in ascending order.
-                for neighbor in reversed(self.neighbors(v)):
-                    vertices.appendleft(neighbor)
-
-        return visited
+        return self._dfs(v_start, v_end)
 
     def bfs(self, v_start: int, v_end: int = None) -> []:
         """
@@ -257,131 +241,24 @@ class DirectedGraph:
         if self.is_empty():
             return components
 
-        # Initialize stack for DFS traversal of graph.
-        s1: deque = deque()
+        # Iterate through all vertices via DFS.
+        # The top_stack maintains a topological sorting of all visited vertices.
+        top_stack: deque = deque()
+        vertices: deque = deque()
+        for v in self.get_vertices():
+            vertices.appendleft(v)
 
-        # Initialize stack to track last-visited vertices.
-        s2: deque = deque()
-
-        # Initialize stack to track current visited vertices.
-        s3: deque = deque()
-
-        # Initialize set to track all visited vertices.
-        visited: set = set()
-
-        # Initialize list of vertices to traverse.
-        vertices: list = self.get_vertices()
-
-        # Traverse vertices via DFS until all vertices are visited.
-        while len(vertices) > 0:
-            v: int = vertices.pop()
-
-            # Grab next vertex that hasn't been visited.
-            while v in visited and len(vertices) > 0:
-                v = vertices.pop()
-
-            # Visited all vertices, so we can stop.
-            if v is None:
-                break
-
-            # Clear DFS stack.
-            s1.clear()
-
-            # Traverse graph in DFS order starting from vertex v.
-            s1.appendleft(v)
-            while len(s1) > 0:
-                v = s1.popleft()
-
-                if v not in visited:
-                    visited.add(v)
-
-                    # Track visit order for later so we can roll back once we hit a dead end.
-                    s3.appendleft(v)
-
-                    # Find all unvisited neighbors of vertex v.
-                    neighbors = self.neighbors(v)
-                    unvisited_neighbors = list()
-                    for neighbor in neighbors:
-                        if neighbor not in visited:
-                            unvisited_neighbors.append(neighbor)
-
-                    # We have hit a dead end.
-                    if len(unvisited_neighbors) == 0:
-
-                        # Roll back until we reach a vertex with a neighbor that hasn't been visited.
-                        while len(s3) > 0:
-
-                            # Peek at most recently visited vertex.
-                            prev_v = s3[0]
-
-                            # Check if recent vertex has any neighbor's that we haven't visited yet.
-                            prev_v_neighbors = self.neighbors(prev_v)
-                            prev_v_unvisited = list()
-                            for p in prev_v_neighbors:
-                                if p not in visited:
-                                    prev_v_unvisited.append(p)
-
-                            # If there are no neighbor's left to visit, roll back visit stack.
-                            if len(prev_v_unvisited) == 0:
-                                v = s3.popleft()
-                                if v not in s2:
-                                    s2.appendleft(v)
-
-                            # Otherwise, stop and continue DFS starting from next vertex.
-                            else:
-                                break
-
-                    # Add all unvisited neighbors to DFS stack.
-                    for neighbor in unvisited_neighbors:
-                        s1.appendleft(neighbor)
+        _: list = self._dfs_complete(vertices, top_stack=top_stack)
 
         # Reverse graph to perform second round of DFS.
         d_reverse: DirectedGraph = self.reversed()
+        self.adj_matrix, d_reverse.adj_matrix = d_reverse.adj_matrix, self.adj_matrix
 
-        # Clear visited stack.
-        visited.clear()
+        # Iterate through all vertices in reverse order via DFS.
+        components = self._dfs_complete(top_stack)
 
-        # Traverse vertices via DFS until all vertices are visited.
-        while len(s2) > 0:
-            v = s2.popleft()
-
-            # Grab next vertex that hasn't been visited.
-            while v in visited and len(s2) > 0:
-                v = s2.popleft()
-
-            # Visited all vertices, so we can stop.
-            if v is None:
-                break
-
-            # Clear DFS stack.
-            s1.clear()
-
-            # Create new list to track all vertices in a given component.
-            component: list = list()
-
-            # Traverse graph in DFS order starting from vertex v.
-            s1.appendleft(v)
-            while len(s1) > 0:
-                v = s1.popleft()
-
-                if v not in visited:
-                    visited.add(v)
-                    component.append(v)
-
-                    # Find all unvisited neighbors of vertex v.
-                    neighbors = d_reverse.neighbors(v)
-                    unvisited_neighbors = list()
-                    for neighbor in neighbors:
-                        if neighbor not in visited:
-                            unvisited_neighbors.append(neighbor)
-
-                    # Add all unvisited neighbors to DFS stack.
-                    for neighbor in unvisited_neighbors:
-                        s1.appendleft(neighbor)
-
-            # Add component to components list in reverse order since second traversal of DFS is done in reverse.
-            if len(component) > 0:
-                components.append(list(reversed(component)))
+        # Reverse graph again to return to original form.
+        self.adj_matrix = d_reverse.adj_matrix
 
         return components
 
@@ -424,3 +301,98 @@ class DirectedGraph:
         """
 
         return src != dst and 0 <= src < self.v_count and 0 <= dst < self.v_count
+
+    def _dfs_complete(self, vertices: deque, top_stack: deque = None) -> []:
+        """
+        Returns a list of weakly connected components using DFS traversal.
+
+        An optional top_stack parameter tracks the topological sorting of the graph and in turn ensures that
+        the returned components are strongly connected.
+        """
+
+        components: list = list()
+        unvisited: list = [True] * self.v_count
+
+        while vertices:
+            v: int = vertices.popleft()
+
+            # Grab the next vertex that hasn't been visited.
+            while not unvisited[v] and vertices:
+                v = vertices.popleft()
+
+            # All vertices have been visited, so we can stop.
+            if v is None:
+                break
+
+            component: list = self._dfs(v_start=v, unvisited=unvisited, top_stack=top_stack)
+            if len(component) > 0:
+                components.append(component)
+
+        return components
+
+    def _dfs(self, v_start: int, v_end: int = None, unvisited: list = None, top_stack: deque = None) -> []:
+        """
+        Returns a list containing all vertices visited starting from the vertex v_start up to the optional vertex
+        v_end via DFS.
+
+        An optional list of unvisited vertices ensures vertices are visited exactly once during multiple calls to
+        this method.
+
+        An optional top_stack parameter maintains a topological sorting of all visited vertices.
+        """
+
+        # The backstack holds any visited vertices in the order that they were visited.
+        backstack: deque = deque()
+
+        vertices: deque = deque()
+        visited: list = list()
+
+        if unvisited is None:
+            unvisited = [True] * self.v_count
+
+        vertices.appendleft(v_start)
+        while vertices:
+            v: int = vertices.popleft()
+
+            if unvisited[v]:
+                unvisited[v] = False
+                visited.append(v)
+                backstack.appendleft(v)
+
+                # Unroll backstack so that its top points to a vertex with at least one unvisited neighbor. Update
+                # top_stack in the process.
+                if top_stack is not None:
+                    self._backtrack(unvisited, backstack, top_stack)
+
+                if v == v_end:
+                    break
+
+                # Neighbors are pushed in descending order so that they are visited in ascending order.
+                for neighbor in reversed(self.neighbors(v)):
+                    if unvisited[neighbor]:
+                        vertices.appendleft(neighbor)
+
+        return visited
+
+    def _backtrack(self, unvisited: list, backstack: deque, top_stack: deque) -> None:
+        """
+        While the vertex at the top of the backstack has no unvisited neighbors, pops the vertex and pushes it to the
+        top_stack.
+
+        This effectively rolls back the backstack so that either the stack is emptied or the top points to a vertex
+        that has unvisited neighbors.
+
+        The top_stack will contain the topological sorting of the graph in return.
+        """
+
+        while backstack:
+            v: int = backstack[0]
+            v_unvisited: list = list()
+            for neighbor in self.neighbors(v):
+                if unvisited[neighbor]:
+                    v_unvisited.append(neighbor)
+
+            if not v_unvisited:
+                top_stack.appendleft(backstack.popleft())
+            else:
+                break
