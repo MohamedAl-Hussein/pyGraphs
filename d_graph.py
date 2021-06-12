@@ -1,9 +1,10 @@
 # Course: CS261 - Data Structures
-# Author:
-# Assignment:
-# Description:
+# Author: Mohamed Al-Hussein
+# Assignment: 06
+# Description: Directed graph implementation.
 
 from collections import deque
+import heapq
 
 
 class DirectedGraph:
@@ -216,9 +217,36 @@ class DirectedGraph:
 
     def dijkstra(self, src: int) -> []:
         """
-        TODO: Write this implementation
+        Returns a list of distances of src vertex to every other vertex.
+
+        If a vertex is not reachable, then its distance is infinity.
         """
-        pass
+
+        distances: list = list()
+
+        if self.is_empty() or not 0 <= src < self.v_count:
+            return distances
+
+        # Create priority queue containing first vertex with distance 0.
+        vertices: list = list()
+        heapq.heappush(vertices, (0, src))
+        visited: dict = dict()
+
+        # Iterate through priority queue, updating min distance for each vertex.
+        while vertices:
+            dist_v, v = heapq.heappop(vertices)
+            if v not in visited:
+                visited[v] = dist_v
+                for neighbor in self.neighbors(v):
+                    d_neighbor: int = self.adj_matrix[v][neighbor]
+                    heapq.heappush(vertices, (dist_v + d_neighbor, neighbor))
+
+        # Update distances with min distance for each vertex, or inf if they are not reachable.
+        for v in self.get_vertices():
+            dist: int = visited.get(v, float("inf"))
+            distances.append(dist)
+
+        return distances
 
     def are_adjacent(self, src: int, dst: int) -> bool:
         """Returns True if src vertex has an outgoing edge that connects to dst vertex."""

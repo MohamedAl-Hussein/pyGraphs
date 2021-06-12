@@ -1,7 +1,7 @@
-# Course: 
-# Author: 
-# Assignment: 
-# Description:
+# Course: CS261 - Data Structures
+# Author: Mohamed Al-Hussein
+# Assignment: 06
+# Description: Undirected graph implementation
 
 from collections import deque
 

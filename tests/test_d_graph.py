@@ -410,6 +410,35 @@ class TestDirectedGraph(unittest.TestCase):
         # Act/Assert
         self.assertFalse(g.has_cycle())
 
+    def test_dijkstra_example_1(self) -> None:
+        # Arrange
+        exp: list = [
+            [0, 10, 35, 28, 25],
+            [27, 0, 25, 18, 15],
+            [50, 23, 0, 41, 38],
+            [32, 5, 7, 0, 20],
+            [12, 8, 10, 3, 0],
+            [0, 10, float("inf"), float("inf"), 25],
+            [27, 0, float("inf"), float("inf"), 15],
+            [50, 23, 0, float("inf"), 38],
+            [32, 5, 7, 0, 20],
+            [12, 22, float("inf"), float("inf"), 0]
+        ]
+        edges: list = [(0, 1, 10), (4, 0, 12), (1, 4, 15), (4, 3, 3), (3, 1, 5), (2, 1, 23), (3, 2, 7)]
+        g: DirectedGraph = DirectedGraph(edges)
+
+        for i in range(5):
+            d: list = g.dijkstra(i)
+            e: list = exp[i]
+            self.assertListEqual(e, d)
+
+        g.remove_edge(4, 3)
+
+        for i in range(0, 5):
+            d: list = g.dijkstra(i)
+            e: list = exp[i+5]
+            self.assertListEqual(e, d)
+
 
 if __name__ == "__main__":
     unittest.main()
