@@ -128,16 +128,24 @@ directed_graph = dbc.Row([
         ),
         width=9
     ),
-    dbc.Col(
-        dbc.FormGroup([
-            dbc.Label("Options"),
-            dbc.Input(type="text", id="src-node"),
-            dbc.Input(type="text", id="dst-node"),
-            dbc.Input(type="text", id="edge-weight"),
-            dbc.Button("Apply", id="btn-add-node", color="primary")
-        ]),
-        width=3
-    )
+    dbc.Col([
+        dbc.Row(
+            dbc.FormGroup([
+                dbc.Label("Add Edge"),
+                dbc.Input(type="text", id="src-node"),
+                dbc.Input(type="text", id="dst-node"),
+                dbc.Input(type="text", id="edge-weight"),
+                dbc.Button("Add", id="btn-add-edge", n_clicks_timestamp=0, color="primary"),
+                dbc.Button("Remove", id="btn-remove-edge", n_clicks_timestamp=0, color="primary")
+            ])
+        ),
+        dbc.Row(
+            dbc.FormGroup([
+                dbc.Label("Add Vertex"),
+                dbc.Button("Add", id="btn-add-vertex", color="primary")
+            ])
+        )
+    ], width=3)
 ])
 
 undirected_graph = dbc.Row([
@@ -169,15 +177,25 @@ undirected_graph = dbc.Row([
         ),
         width=9
     ),
-    dbc.Col(
-        dbc.FormGroup([
-            dbc.Label("Options"),
-            dbc.Input(type="text", id="ud-src-node"),
-            dbc.Input(type="text", id="ud-dst-node"),
-            dbc.Button("Apply", id="ud-btn-add-node", color="primary")
-        ]),
-        width=3
-    )
+    dbc.Col([
+        dbc.Row(
+            dbc.FormGroup([
+                dbc.Label("Add Edge"),
+                dbc.Input(type="text", id="ud-src-node"),
+                dbc.Input(type="text", id="ud-dst-node"),
+                dbc.Button("Add", id="ud-btn-add-edge", n_clicks_timestamp=0, color="primary"),
+                dbc.Button("Remove", id="ud-btn-remove-edge", n_clicks_timestamp=0, color="primary")
+            ])
+        ),
+        dbc.Row(
+            dbc.FormGroup([
+                dbc.Label("Add Vertex"),
+                dbc.Input(type="text", id="ud-vertex"),
+                dbc.Button("Add", id="ud-btn-add-vertex", color="primary"),
+                dbc.Button("Remove", id="ud-btn-remove-vertex", color="primary")
+            ])
+        )
+    ], width=3)
 ])
 
 app.layout = html.Div([
@@ -214,42 +232,63 @@ def render_page_content(pathname):
     Output("dst-node", "value"),
     Output("edge-weight", "value"),
     Output("dGraphData", "data"),
-    Input("btn-add-node", "n_clicks"),
+    Input("btn-add-edge", "n_clicks_timestamp"),
+    Input("btn-remove-edge", "n_clicks_timestamp"),
+    Input("btn-add-vertex", "n_clicks_timestamp"),
     State("dGraphData", "data"),
     State("src-node", "value"),
     State("dst-node", "value"),
-    State("edge-weight", "value"),
-    State("dGraph", "elements")
+    State("edge-weight", "value")
 )
-def update_dgraph_elements(n_clicks, data, src, dst, weight, elements):
-    if src is not None and dst is not None and weight is not None:
-        _graph = DirectedGraph()
-        _graph.__dict__ = json.loads(data)
-        _graph.add_edge(int(src), int(dst), int(weight))
-        elements = d_graph_elements(_graph)
-        return elements, str(), str(), str(), json.dumps(_graph.__dict__)
-    return elements, str(), str(), str(), data
+def update_dgraph(btn_add_edge, btn_remove_edge, btn_add_vertex, data, src, dst, weight):
+    _graph = DirectedGraph()
+    _graph.__dict__ = json.loads(data)
+    btn_id = dash.callback_context.triggered[0]["prop_id"].split('.')[0]
+    if btn_id == "btn-add-edge" and btn_add_edge:
+        _graph.add_edge(int(src or 0), int(dst or 0), int(weight or 0))
+    elif btn_id == "btn-remove-edge" and btn_remove_edge:
+        _graph.remove_edge(int(src or 0), int(dst or 0))
+    elif btn_id == "btn-add-vertex" and btn_add_vertex:
+        _graph.add_vertex()
+
+    elements = d_graph_elements(_graph)
+    return elements, str(), str(), str(), json.dumps(_graph.__dict__)
 
 
 @app.callback(
     Output("udGraph", "elements"),
     Output("ud-src-node", "value"),
     Output("ud-dst-node", "value"),
+    Output("ud-vertex", "value"),
     Output("udGraphData", "data"),
-    Input("ud-btn-add-node", "n_clicks"),
+    Input("ud-btn-add-edge", "n_clicks_timestamp"),
+    Input("ud-btn-remove-edge", "n_clicks_timestamp"),
+    Input("ud-btn-add-vertex", "n_clicks_timestamp"),
+    Input("ud-btn-remove-vertex", "n_clicks_timestamp"),
     State("udGraphData", "data"),
     State("ud-src-node", "value"),
     State("ud-dst-node", "value"),
-    State("udGraph", "elements")
+    State("ud-vertex", "value")
 )
-def update_graph_elements(n_clicks, data, src, dst, elements):
-    if src is not None and dst is not None:
-        _graph = UndirectedGraph()
-        _graph.__dict__ = json.loads(data)
-        graph.add_edge(src, dst)
-        elements = ud_graph_elements(graph)
-        return elements, str(), str(), json.dumps(_graph.__dict__)
-    return elements, str(), str(), data
+def update_graph_elements(btn_add_edge, btn_remove_edge, btn_add_vertex, btn_remove_vertex, data, src, dst, v):
+    _graph = UndirectedGraph()
+    _graph.__dict__ = json.loads(data)
+    btn_id = dash.callback_context.triggered[0]["prop_id"].split('.')[0]
+    if btn_id == "ud-btn-add-edge" and btn_add_edge:
+        if src is not None and dst is not None:
+            _graph.add_edge(src, dst)
+    elif btn_id == "ud-btn-remove-edge" and btn_remove_edge:
+        if src is not None and dst is not None:
+            _graph.remove_edge(src, dst)
+    elif btn_id == "ud-btn-add-vertex" and btn_add_vertex:
+        if v is not None:
+            _graph.add_vertex(v)
+    elif btn_id == "ud-btn-remove-vertex" and btn_remove_vertex:
+        if v is not None:
+            _graph.remove_vertex(v)
+
+    elements = ud_graph_elements(_graph)
+    return elements, str(), str(), str(), json.dumps(_graph.__dict__)
 
 
 if __name__ == "__main__":
